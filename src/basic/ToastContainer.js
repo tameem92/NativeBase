@@ -24,6 +24,7 @@ const POSITION = {
 
 class ToastContainer extends Component {
   static show({ ...config }) {
+    console.log('SHOW SHOW SHOW')
     this.toastInstance._root.showToast({ config });
   }
   static hide() {
@@ -33,6 +34,7 @@ class ToastContainer extends Component {
   }
   constructor(props) {
     super(props);
+    console.log('SHOW SHOW SHOW')
 
     this.state = {
       fadeAnim: new Animated.Value(0),
@@ -50,12 +52,14 @@ class ToastContainer extends Component {
         if (dx !== 0) {
           Animated.timing(this.state.pan, {
             toValue: { x: dx, y: 0 },
-            duration: 100
+            duration: 100,
+            useNativeDriver: false,
           }).start(() => this.closeToast('swipe'));
         }
       }
     });
   }
+
 
   componentDidMount() {
     Keyboard.addListener('keyboardDidShow', this.keyboardDidShow);
@@ -147,7 +151,8 @@ class ToastContainer extends Component {
       useNativeDriver: false
     }).start();
   }
-  closeModal = (reason) => {
+  closeModal(reason) {
+    console.log('Called close modal')
     this.setState({
       modalVisible: false
     });
@@ -157,18 +162,23 @@ class ToastContainer extends Component {
     }
   }
   closeToast(reason) {
+    console.log('CLOSE MODAL')
     clearTimeout(this.closeTimeout);
     Animated.timing(this.state.fadeAnim, {
       toValue: 0,
       duration: 200,
       useNativeDriver: false
     }).start(() => {
-      this.closeModal(reason);
+      // Changed by tameem
+
+      console.log('CLOSE MODAL')
+      this.closeModal.bind(this, reason)();
       this.state.pan.setValue({ x: 0, y: 0 });
     });
   }
 
   render() {
+    console.log('TOAST', this.state)
     if (this.state.modalVisible) {
       const { x, y } = this.state.pan;
       return (
